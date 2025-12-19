@@ -1,8 +1,6 @@
-// MCQscript.js
-// PHIÊN BẢN HOÀN THIỆN: 66 câu tổng, random 20 câu, lưu và hiển thị nội dung đáp án chi tiết (có HTML).
+// MCQscript.js - Phiên bản: Chỉ hiện giải thích câu SAI
 
-// 🚨 BƯỚC 1: CẤU HÌNH FIREBASE 🚨
-// Đảm bảo các giá trị này là chính xác
+// 🚨 BƯỚC 1: CẤU HÌNH FIREBASE (Giữ nguyên) 🚨
 const firebaseConfig = {
   apiKey: "AIzaSyDKRribCxrXMpJcTYBdwe-7zZ8bZWlReLc",
   authDomain: "eaching1.firebaseapp.com",
@@ -13,52 +11,113 @@ const firebaseConfig = {
   measurementId: "G-685W8RSP1Y"
 };
 
-// Khởi tạo Firebase và Firestore
-firebase.initializeApp(firebaseConfig);
+// Khởi tạo Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
 
-// Đáp án chính xác cho TẤT CẢ 66 câu hỏi
-// Thay thế đoạn correctAnswers cũ bằng đoạn này:
+// 🚨 BƯỚC 2: DỮ LIỆU CÂU HỎI & GIẢI THÍCH (80 câu) 🚨
+const quizData = {
+    // === PHẦN 1: CHIA ĐỘNG TỪ ===
+    q1: { correct: 'B', explain: 'Sai. Chủ ngữ "She" (ngôi thứ 3 số ít) -> Động từ thêm "s" (reads).' },
+    q2: { correct: 'B', explain: 'Sai. Chủ ngữ "My brother" (số ít) -> Phủ định dùng "doesn\'t" + V nguyên thể.' },
+    q3: { correct: 'B', explain: 'Sai. Lịch trình tàu xe cố định -> Dùng hiện tại đơn. "The train" số ít -> leaves.' },
+    q4: { correct: 'A', explain: 'Sai. Chủ ngữ "They" (số nhiều) -> Động từ giữ nguyên (watch).' },
+    q5: { correct: 'C', explain: 'Sai. Câu hỏi với chủ ngữ "your dad" (số ít) -> Trợ động từ "Does".' },
+    q6: { correct: 'A', explain: 'Sai. Chủ ngữ "I" -> Động từ giữ nguyên (like).' },
+    q7: { correct: 'B', explain: 'Sai. Chủ ngữ "My mom" (số ít) -> Động từ thêm "s" (cooks).' },
+    q8: { correct: 'A', explain: 'Sai. Chủ ngữ "The children" (số nhiều) -> Phủ định dùng "don\'t".' },
+    q9: { correct: 'C', explain: 'Sai. Câu hỏi với "you" -> Trợ động từ "do". Cấu trúc: Wh- + do + S + V?' },
+    q10: { correct: 'C', explain: 'Sai. "He" -> Động từ kết thúc bằng "y" trước là phụ âm -> đổi thành "ies" (studies).' },
+    q11: { correct: 'B', explain: 'Sai. "My sister" (số ít) -> Động từ "wash" tận cùng là "sh" -> thêm "es" (washes).' },
+    q12: { correct: 'A', explain: 'Sai. "The stars" (số nhiều) -> Động từ giữ nguyên (shine).' },
+    q13: { correct: 'A', explain: 'Sai. "Birds" (số nhiều) -> Động từ giữ nguyên (fly).' },
+    q14: { correct: 'B', explain: 'Sai. "My teacher" (số ít) -> Phủ định dùng "doesn\'t".' },
+    q15: { correct: 'B', explain: 'Sai. Chủ ngữ giả "It" -> Động từ thêm "s" (rains).' },
+    q16: { correct: 'C', explain: 'Sai. "your brother" (số ít) -> Câu hỏi dùng "Does" + V nguyên thể (like).' },
+    q17: { correct: 'B', explain: 'Sai. Sự thật hiển nhiên. Water (không đếm được) -> boils.' },
+    q18: { correct: 'A', explain: 'Sai. Chủ ngữ "We" -> Động từ giữ nguyên (have).' },
+    q19: { correct: 'B', explain: 'Sai. "My friend" (số ít) -> Động từ thêm "s" (lives).' },
+    q20: { correct: 'B', explain: 'Sai. "He" -> Phủ định dùng "doesn\'t" + V nguyên thể (go).' },
 
-const correctAnswers = {
-    // PHẦN 1: Chia động từ (q1-q20)
-    q1: 'B', q2: 'B', q3: 'B', q4: 'A', q5: 'C', 
-    q6: 'A', q7: 'B', q8: 'A', q9: 'C', q10: 'C', 
-    q11: 'B', q12: 'A', q13: 'A', q14: 'B', q15: 'B', 
-    q16: 'C', q17: 'B', q18: 'A', q19: 'B', q20: 'B',
+    // === PHẦN 2: SẮP XẾP CÂU ===
+    q21: { correct: 'B', explain: 'Sai. Trạng từ tần suất (always) đứng TRƯỚC động từ thường (eats).' },
+    q22: { correct: 'A', explain: 'Sai. Câu hỏi Yes/No: Does + S + V + ...? (Does she walk...)' },
+    q23: { correct: 'A', explain: 'Sai. Câu phủ định: S + don\'t + V + O (I don\'t play...).' },
+    q24: { correct: 'B', explain: 'Sai. Trạng từ (often) đứng trước động từ (finishes).' },
+    q25: { correct: 'C', explain: 'Sai. Trạng từ (never) đứng trước động từ (barks). Subject là "Our dog" số ít -> barks.' },
+    q26: { correct: 'A', explain: 'Sai. Trạng từ (always) đứng trước động từ (work).' },
+    q27: { correct: 'A', explain: 'Sai. Cấu trúc: S + V + O + Time (My dad goes to work at 7 AM).' },
+    q28: { correct: 'B', explain: 'Sai. Câu hỏi: Does + S + V nguyên thể? (Does she read...).' },
+    q29: { correct: 'B', explain: 'Sai. Cấu trúc: S + V + O + Time (The children play soccer on Saturdays).' },
+    q30: { correct: 'A', explain: 'Sai. Always đứng trước động từ eat.' },
+    q31: { correct: 'A', explain: 'Sai. Usually đứng trước động từ have.' },
+    q32: { correct: 'A', explain: 'Sai. Câu hỏi Wh/H: [Wh] + Does + S + Often + V? (Does he often go...).' },
+    q33: { correct: 'B', explain: 'Sai. Never đứng trước động từ drinks.' },
+    q34: { correct: 'B', explain: 'Sai. Câu hỏi: Do + you + want...?' },
+    q35: { correct: 'A', explain: 'Sai. Trạng từ thời gian (every morning) thường đứng cuối câu.' },
+    q36: { correct: 'C', explain: 'Sai. Phủ định: She + doesn\'t + live + in Paris.' },
+    q37: { correct: 'A', explain: 'Sai. Trạng từ thời gian (at 8 o\'clock) đứng cuối câu.' },
+    q38: { correct: 'A', explain: 'Sai. Câu hỏi: Does + your father + work...?' },
+    q39: { correct: 'B', explain: 'Sai. Always đứng trước động từ arrive.' },
+    q40: { correct: 'A', explain: 'Sai. Often đứng trước động từ help.' },
 
-    // PHẦN 2: Sắp xếp câu (q21-q40)
-    q21: 'B', q22: 'A', q23: 'A', q24: 'B', q25: 'C',
-    q26: 'A', q27: 'A', q28: 'B', q29: 'B', q30: 'A',
-    q31: 'A', q32: 'A', q33: 'B', q34: 'B', q35: 'A',
-    q36: 'C', q37: 'A', q38: 'A', q39: 'B', q40: 'A',
+    // === PHẦN 3: CHỌN DẠNG ĐÚNG ===
+    q41: { correct: 'B', explain: 'Sai. He (số ít) -> plays.' },
+    q42: { correct: 'B', explain: 'Sai. My mom (số ít) -> cooks.' },
+    q43: { correct: 'A', explain: 'Sai. We (số nhiều) -> don\'t.' },
+    q44: { correct: 'B', explain: 'Sai. The sun (duy nhất/số ít) -> rises.' },
+    q45: { correct: 'B', explain: 'Sai. She (số ít) -> Trợ động từ Does.' },
+    q46: { correct: 'A', explain: 'Sai. They (số nhiều) -> live.' },
+    q47: { correct: 'B', explain: 'Sai. My father (số ít) -> drives.' },
+    q48: { correct: 'A', explain: 'Sai. We (số nhiều) -> don\'t.' },
+    q49: { correct: 'B', explain: 'Sai. He (số ít) -> Trợ động từ Does.' },
+    q50: { correct: 'B', explain: 'Sai. The dog (số ít) -> barks.' },
+    q51: { correct: 'A', explain: 'Sai. My cousins (số nhiều, có s) -> visit.' },
+    q52: { correct: 'B', explain: 'Sai. Your cat (số ít) -> Does.' },
+    q53: { correct: 'A', explain: 'Sai. Động từ tobe đi với I là am.' },
+    q54: { correct: 'A', explain: 'Sai. Plants (số nhiều) -> need.' },
+    q55: { correct: 'B', explain: 'Sai. She (số ít) -> doesn\'t.' },
+    q56: { correct: 'A', explain: 'Sai. These flowers (số nhiều) -> smell.' },
+    q57: { correct: 'A', explain: 'Sai. They (số nhiều) -> Do.' },
+    q58: { correct: 'B', explain: 'Sai. My brother (số ít) -> fixes.' },
+    q59: { correct: 'A', explain: 'Sai. Trạng từ (usually) đứng trước động từ (go).' },
+    q60: { correct: 'B', explain: 'Sai. It (số ít) -> takes.' },
 
-    // PHẦN 3: Chọn dạng đúng (q41-q60)
-    q41: 'B', q42: 'B', q43: 'A', q44: 'B', q45: 'B',
-    q46: 'A', q47: 'B', q48: 'A', q49: 'B', q50: 'B',
-    q51: 'A', q52: 'B', q53: 'A', q54: 'A', q55: 'B',
-    q56: 'A', q57: 'A', q58: 'B', q59: 'A', q60: 'B',
-
-    // PHẦN 4: Điền từ phủ định (q61-q80)
-    q61: 'B', q62: 'A', q63: 'B', q64: 'A', q65: 'B',
-    q66: 'A', q67: 'B', q68: 'A', q69: 'B', q70: 'A',
-    q71: 'B', q72: 'A', q73: 'B', q74: 'A', q75: 'B',
-    q76: 'A', q77: 'B', q78: 'A', q79: 'B', q80: 'A'
+    // === PHẦN 4: ĐIỀN TỪ PHỦ ĐỊNH ===
+    q61: { correct: 'B', explain: 'Sai. My father (số ít) -> doesn\'t.' },
+    q62: { correct: 'A', explain: 'Sai. They (số nhiều) -> don\'t.' },
+    q63: { correct: 'B', explain: 'Sai. She (số ít) -> doesn\'t.' },
+    q64: { correct: 'A', explain: 'Sai. I (ngôi thứ nhất) -> don\'t.' },
+    q65: { correct: 'B', explain: 'Sai. The cat (số ít) -> doesn\'t.' },
+    q66: { correct: 'A', explain: 'Sai. We (số nhiều) -> don\'t.' },
+    q67: { correct: 'B', explain: 'Sai. It (số ít) -> doesn\'t.' },
+    q68: { correct: 'A', explain: 'Sai. My friends (số nhiều) -> don\'t.' },
+    q69: { correct: 'B', explain: 'Sai. This bus (số ít) -> doesn\'t.' },
+    q70: { correct: 'A', explain: 'Sai. You (ngôi thứ 2) -> don\'t.' },
+    q71: { correct: 'B', explain: 'Sai. My sister (số ít) -> doesn\'t.' },
+    q72: { correct: 'A', explain: 'Sai. Lions (số nhiều) -> don\'t.' },
+    q73: { correct: 'B', explain: 'Sai. He (số ít) -> doesn\'t.' },
+    q74: { correct: 'A', explain: 'Sai. They (số nhiều) -> don\'t.' },
+    q75: { correct: 'B', explain: 'Sai. My dog (số ít) -> doesn\'t.' },
+    q76: { correct: 'A', explain: 'Sai. The shops (số nhiều) -> don\'t.' },
+    q77: { correct: 'B', explain: 'Sai. She (số ít) -> doesn\'t.' },
+    q78: { correct: 'A', explain: 'Sai. We (số nhiều) -> don\'t.' },
+    q79: { correct: 'B', explain: 'Sai. That computer (số ít) -> doesn\'t.' },
+    q80: { correct: 'A', explain: 'Sai. I (ngôi thứ nhất) -> don\'t.' }
 };
 
-// ... Các phần code khác giữ nguyên ...
+const MAX_QUESTIONS = Object.keys(quizData).length; 
+const QUESTIONS_TO_PICK = 20; 
 
-const MAX_QUESTIONS = Object.keys(correctAnswers).length; // Tổng số câu hỏi hiện có (66)
-const QUESTIONS_TO_PICK = 20; // Số câu hỏi muốn lấy ngẫu nhiên
-
-let currentQuizQuestions = []; // Lưu trữ ID của 20 câu hỏi được chọn ngẫu nhiên
+let currentQuizQuestions = [];
 const questionContainer = document.getElementById('quizForm');
 let isSubmitted = false;
 
 // --- LOGIC CHỌN NGẪU NHIÊN VÀ RENDER QUIZ ---
-
 function shuffleAndPickQuestions(max, pick) {
-    const allKeys = Object.keys(correctAnswers);
+    const allKeys = Object.keys(quizData);
     for (let i = allKeys.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [allKeys[i], allKeys[j]] = [allKeys[j], allKeys[i]];
@@ -72,21 +131,28 @@ function renderQuiz() {
     
     questionContainer.innerHTML = ''; 
 
-    const quizContentDiv = document.createElement('div'); 
-    quizContentDiv.id = 'currentQuizContent';
-
     const originalContainer = document.getElementById('originalQuestionsContainer');
+    
+    // Tạo nút Nộp bài
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'button';
+    submitBtn.id = 'submitBtn';
+    submitBtn.innerText = 'Nộp Bài & Lưu Lịch Sử';
+    submitBtn.addEventListener('click', submitQuiz);
 
+    // Render từng câu
     currentQuizQuestions.forEach((qId, index) => {
         const originalQuestion = originalContainer.querySelector(`#${qId}`);
         
         if (originalQuestion) {
             const newQuestion = originalQuestion.cloneNode(true);
-            
             const pElement = newQuestion.querySelector('p');
             if (pElement) {
-                const content = pElement.innerHTML.substring(pElement.innerHTML.indexOf('.') + 1).trim();
-                pElement.innerHTML = `${index + 1}. ${content}`;
+                let content = pElement.innerHTML;
+                if(content.includes('.')) {
+                    content = content.substring(content.indexOf('.') + 1).trim();
+                }
+                pElement.innerHTML = `<strong>Câu ${index + 1}:</strong> ${content}`;
             }
 
             const radioInputs = newQuestion.querySelectorAll('input[type="radio"]');
@@ -95,195 +161,130 @@ function renderQuiz() {
                 input.checked = false;
             });
             
-            quizContentDiv.appendChild(newQuestion);
+            questionContainer.appendChild(newQuestion);
         }
     });
 
-    questionContainer.appendChild(quizContentDiv);
-
-    const submitButton = document.createElement('button');
-    submitButton.type = 'button';
-    submitButton.id = 'submitBtn';
-    submitButton.innerText = 'Nộp Bài & Lưu Lịch Sử';
-    submitButton.addEventListener('click', submitQuiz);
-    questionContainer.appendChild(submitButton);
+    questionContainer.appendChild(submitBtn);
 
     document.getElementById('result').style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
     renderQuiz();
 });
 
-// --- LOGIC CHẤM ĐIỂM VÀ LƯU TRỮ ---
-
+// --- LOGIC CHẤM ĐIỂM ---
 function submitQuiz() {
     if (isSubmitted) return; 
 
     let score = 0;
-    const form = document.getElementById('quizForm');
-    const resultDiv = document.getElementById('result');
-    const questions = form.querySelectorAll('#currentQuizContent .question'); 
+    const questions = questionContainer.querySelectorAll('.question'); 
     let answeredCount = 0;
     let firstUnansweredQuestion = null;
-    let userAnswers = {}; // Lưu trữ chi tiết nội dung đáp án
+    let userAnswers = {}; 
 
+    // Kiểm tra làm hết chưa
     questions.forEach(question => {
         const name = question.id; 
-        const selectedInput = question.querySelector('input[name="' + name + '"]:checked');
-        const selectedOptionValue = selectedInput ? selectedInput.value : null; // A, B, C, D
+        const selectedInput = question.querySelector(`input[name="${name}"]:checked`);
         
-        // Reset
-        question.style.borderLeftColor = '#4285f4'; 
-        question.classList.remove('submitted'); 
-        question.querySelectorAll('label').forEach(label => {
-            label.classList.remove('correct-answer', 'wrong-answer');
-        });
-
-        if (selectedOptionValue) {
+        if (selectedInput) {
             answeredCount++;
-            
-            // Lấy nội dung HTML của đáp án người dùng chọn
-            const userLabel = question.querySelector(`label[data-value="${selectedOptionValue}"]`);
-            // Lấy innerHTML, sau đó loại bỏ thẻ <input> để chỉ giữ lại nội dung hiển thị
-            let userContentHTML = userLabel ? userLabel.innerHTML : `[Không tìm thấy nội dung cho: ${selectedOptionValue}]`;
-            userContentHTML = userContentHTML.replace(/<input.*?>/, '').trim(); // Loại bỏ thẻ input radio
-
-            // Lấy nội dung HTML của đáp án đúng
-            const correctAnswerValue = correctAnswers[name];
-            const correctLabel = question.querySelector(`label[data-value="${correctAnswerValue}"]`);
-            let correctContentHTML = correctLabel ? correctLabel.innerHTML : `[Không tìm thấy nội dung cho: ${correctAnswerValue}]`;
-            correctContentHTML = correctContentHTML.replace(/<input.*?>/, '').trim(); // Loại bỏ thẻ input radio
-            
-            // LƯU TRỮ CHI TIẾT ĐẦY ĐỦ VÀ CẢ HTML CONTENT
-            userAnswers[name] = {
-                value: selectedOptionValue,
-                content: userContentHTML, // LƯU HTML CONTENT
-                correctValue: correctAnswerValue,
-                correctContent: correctContentHTML // LƯU HTML CONTENT
-            };
-
-        } else {
-            if (!firstUnansweredQuestion) {
-                firstUnansweredQuestion = question;
-            }
+        } else if (!firstUnansweredQuestion) {
+            firstUnansweredQuestion = question;
         }
     });
     
     if (answeredCount < QUESTIONS_TO_PICK) {
         firstUnansweredQuestion.style.borderLeftColor = '#f4b400';
         firstUnansweredQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        const questionIndex = Array.from(questions).indexOf(firstUnansweredQuestion) + 1;
-        resultDiv.innerHTML = `<span style="color: #db4437;">Vui lòng trả lời hết ${QUESTIONS_TO_PICK} câu hỏi. Câu ${questionIndex} chưa được trả lời.</span>`;
-        resultDiv.style.display = 'block';
+        alert(`Vui lòng trả lời hết ${QUESTIONS_TO_PICK} câu hỏi!`);
         return;
     }
 
-    // 3. CHẤM ĐIỂM (Sử dụng Value A, B, C, D)
+    // Bắt đầu chấm
     isSubmitted = true;
     questions.forEach(question => {
         question.classList.add('submitted');
         const name = question.id;
-        const selectedOptionValue = userAnswers[name].value;
-        const correctAnswer = correctAnswers[name];
+        const selectedInput = question.querySelector(`input[name="${name}"]:checked`);
+        const selectedOptionValue = selectedInput ? selectedInput.value : null; 
+        
+        const correctAnswer = quizData[name].correct;
+        const explanation = quizData[name].explain;
+
+        const userLabel = question.querySelector(`label[data-value="${selectedOptionValue}"]`);
+        let userContent = userLabel ? userLabel.textContent.trim() : "Không chọn";
+        
+        const correctLabel = question.querySelector(`label[data-value="${correctAnswer}"]`);
+        let correctContent = correctLabel ? correctLabel.textContent.trim() : "Lỗi data";
+
+        userAnswers[name] = {
+            value: selectedOptionValue,
+            content: userContent,
+            correctValue: correctAnswer,
+            correctContent: correctContent,
+            explanation: explanation // Lưu giải thích để dùng
+        };
 
         if (selectedOptionValue === correctAnswer) {
             score++;
-            question.style.borderLeftColor = '#0f9d58'; // Đúng -> Xanh lá
+            question.style.borderLeftColor = '#0f9d58'; 
         } else {
-            question.style.borderLeftColor = '#db4437'; // Sai -> Đỏ
+            question.style.borderLeftColor = '#db4437'; 
         }
 
-        // Hiển thị đáp án (Highlight)
         question.querySelectorAll('label').forEach(label => {
-            const optionValue = label.getAttribute('data-value');
-            if (optionValue === correctAnswer) {
-                label.classList.add('correct-answer'); // Đáp án ĐÚNG
-            }
-            if (optionValue === selectedOptionValue && selectedOptionValue !== correctAnswer) {
-                label.classList.add('wrong-answer'); // Câu trả lời SAI của người dùng
-            }
+            const val = label.getAttribute('data-value');
+            if (val === correctAnswer) label.classList.add('correct-answer');
+            if (val === selectedOptionValue && val !== correctAnswer) label.classList.add('wrong-answer');
         });
     });
 
-    // 4. HIỂN THỊ KẾT QUẢ VÀ LƯU FIREBASE
     displayResult(score, QUESTIONS_TO_PICK);
     saveScoreToFirebase(score, userAnswers); 
 }
-
 
 function displayResult(score, total) {
     const resultDiv = document.getElementById('result');
     const submitButton = document.getElementById('submitBtn');
 
     submitButton.disabled = true;
-    submitButton.innerText = 'Đã nộp bài';
+    submitButton.innerText = 'Đã hoàn thành - Kéo xuống để xem lịch sử';
 
     const percentage = (score / total) * 100;
-    let resultText = `Bạn đã hoàn thành bài kiểm tra! <br>`;
-    resultText += `Điểm của bạn: <span style="font-size: 1.5em; color: ${percentage >= 60 ? '#0f9d58' : '#db4437'};">${score}/${total}</span> (${percentage.toFixed(0)}%)`;
-
-    resultDiv.innerHTML = resultText;
+    resultDiv.innerHTML = `
+        <h3>Kết Quả</h3>
+        <p style="font-size: 1.2em;">Bạn làm đúng: <strong style="color: ${percentage >= 50 ? 'green' : 'red'}">${score}/${total}</strong> câu (${percentage.toFixed(0)}%)</p>
+        <button onclick="renderQuiz()" style="background-color: #4285f4; margin-top:10px;">Làm Đề Mới</button>
+    `;
     resultDiv.style.display = 'block';
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    
-    const retryButton = document.createElement('button');
-    retryButton.innerText = 'Làm Bài Mới (Ngẫu Nhiên)';
-    retryButton.style.backgroundColor = '#4285f4';
-    retryButton.style.marginTop = '10px';
-    retryButton.addEventListener('click', () => {
-        resultDiv.style.display = 'none';
-        renderQuiz();
-    });
-    resultDiv.appendChild(retryButton);
 }
 
-
 // --- FIREBASE FUNCTIONS ---
-
-/**
- * Lưu kết quả làm bài vào Firestore.
- * @param {number} score - Điểm số đạt được.
- * @param {object} userAnswers - Câu trả lời của người dùng (chứa content và value).
- */
 function saveScoreToFirebase(score, userAnswers) {
-    // LƯU TRỮ CHI TIẾT ĐẦY ĐỦ
-    const submittedAnswers = {};
-    Object.keys(userAnswers).forEach(qId => {
-        submittedAnswers[qId] = {
-            userValue: userAnswers[qId].value,
-            userContent: userAnswers[qId].content, // LƯU NỘI DUNG HTML
-            correctValue: userAnswers[qId].correctValue,
-            correctContent: userAnswers[qId].correctContent, // LƯU NỘI DUNG HTML
-        };
-    });
-
     db.collection("quiz_scores").add({
         score: score,
         total: QUESTIONS_TO_PICK,
-        answers: submittedAnswers,
+        answers: userAnswers,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then((docRef) => {
-        console.log("Lịch sử làm bài đã được lưu với ID: ", docRef.id);
+        console.log("Đã lưu lịch sử: ", docRef.id);
         loadHistory();
     })
     .catch((error) => {
-        console.error("Lỗi khi lưu lịch sử: ", error);
-        alert("Lỗi khi lưu lịch sử làm bài vào Firebase!");
+        console.error("Lỗi lưu data: ", error);
     });
 }
 
-/**
- * Tải và hiển thị lịch sử làm bài từ Firestore.
- */
 function loadHistory() {
     const historyList = document.getElementById('history-list');
-    historyList.innerHTML = '<p>Đang tải lịch sử...</p>';
-
+    
     db.collection("quiz_scores")
         .orderBy("timestamp", "desc")
         .limit(5)
@@ -291,87 +292,76 @@ function loadHistory() {
         .then((querySnapshot) => {
             historyList.innerHTML = '';
             if (querySnapshot.empty) {
-                historyList.innerHTML = '<p>Chưa có lịch sử làm bài nào được lưu.</p>';
+                historyList.innerHTML = '<p>Chưa có lịch sử làm bài.</p>';
                 return;
             }
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                const date = data.timestamp ? data.timestamp.toDate().toLocaleString('vi-VN') : 'Không rõ ngày';
+                const date = data.timestamp ? data.timestamp.toDate().toLocaleString('vi-VN') : 'Vừa xong';
                 
                 const item = document.createElement('div');
                 item.className = 'history-item';
-                
                 item.innerHTML = `
-                    <p>Ngày làm bài: ${date}</p>
-                    <p>Điểm: <span class="score-display">${data.score} / ${data.total}</span></p>
-                    <button class="view-details-btn" data-id="${doc.id}">Xem chi tiết</button>
-                    <div id="details-${doc.id}" class="details-content" style="display:none;"></div>
+                    <p><strong>Ngày:</strong> ${date}</p>
+                    <p><strong>Điểm:</strong> ${data.score}/${data.total}</p>
+                    <button class="view-details-btn" onclick="toggleDetails('${doc.id}')">Xem kết quả chi tiết</button>
+                    <div id="details-${doc.id}" style="display:none; margin-top:10px;"></div>
                 `;
-                
+                item.dataset.answers = JSON.stringify(data.answers);
                 historyList.appendChild(item);
-                
-                item.querySelector('.view-details-btn').addEventListener('click', function() {
-                    toggleDetails(doc.id, data.answers);
-                });
             });
-        })
-        .catch((error) => {
-            console.error("Lỗi khi tải lịch sử: ", error);
-            historyList.innerHTML = '<p style="color:red;">Lỗi tải lịch sử! Vui lòng kiểm tra console.</p>';
         });
 }
 
-/**
- * Hàm hiển thị/ẩn chi tiết câu trả lời.
- */
-function toggleDetails(docId, answers) {
+// Hàm hiển thị chi tiết (Chỉ hiện giải thích nếu SAI)
+window.toggleDetails = function(docId) {
     const detailsDiv = document.getElementById(`details-${docId}`);
-    const button = document.querySelector(`.view-details-btn[data-id="${docId}"]`);
-
+    
     if (detailsDiv.style.display === 'block') {
         detailsDiv.style.display = 'none';
-        button.innerText = 'Xem chi tiết';
         return;
     }
 
-    let tableHtml = `
-        <table style="width:100%; margin-top: 10px; border-collapse: collapse; font-size: 0.9em;">
+    const itemDiv = detailsDiv.parentElement;
+    const answers = JSON.parse(itemDiv.dataset.answers);
+
+    let html = `
+        <table style="width:100%; border-collapse: collapse; font-size: 14px;">
             <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th style="border: 1px solid #ddd; padding: 8px; width: 5%;">Câu</th>
-                    <th style="border: 1px solid #ddd; padding: 8px;">Đáp án bạn chọn</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; color: #0f9d58;">Đáp án đúng</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; width: 10%;">Kết quả</th>
+                <tr style="background:#f0f0f0; text-align:left;">
+                    <th style="padding:5px; border:1px solid #ddd;">Câu</th>
+                    <th style="padding:5px; border:1px solid #ddd;">Bạn chọn</th>
+                    <th style="padding:5px; border:1px solid #ddd;">Đáp án đúng</th>
+                    <th style="padding:5px; border:1px solid #ddd; width: 40%;">Giải thích (Nếu sai)</th>
                 </tr>
             </thead>
             <tbody>
     `;
-    
-    const sortedQIds = Object.keys(answers).sort((a, b) => {
-        return parseInt(a.substring(1)) - parseInt(b.substring(1));
+
+    const sortedKeys = Object.keys(answers).sort((a, b) => {
+        return parseInt(a.replace('q','')) - parseInt(b.replace('q',''));
     });
 
-    sortedQIds.forEach(qId => {
-        const answerData = answers[qId];
-        // So sánh bằng userValue và correctValue (A, B, C, D)
-        const isCorrect = answerData.userValue === answerData.correctValue;
-        const status = isCorrect ? 'Đúng' : 'Sai';
-        const rowColor = isCorrect ? '#e6ffe6' : '#ffe6e6';
-        
-        // HIỂN THỊ NỘI DUNG HTML (giữ định dạng gạch chân/tô đậm)
-        tableHtml += `
-            <tr style="background-color: ${rowColor};">
-                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${qId}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; color: ${isCorrect ? '#0f9d58' : '#db4437'};">${answerData.userContent}</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">${answerData.correctContent}</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">${status}</td>
+    sortedKeys.forEach(key => {
+        const val = answers[key];
+        const isRight = val.value === val.correctValue;
+        const color = isRight ? '#d4edda' : '#f8d7da'; 
+
+        // LOGIC QUAN TRỌNG: Nếu đúng thì để trống, nếu sai thì hiện giải thích
+        const explainText = isRight ? '' : (val.explanation || 'Chưa có giải thích');
+
+        html += `
+            <tr style="background-color: ${color};">
+                <td style="padding:5px; border:1px solid #ddd;"><strong>${key.toUpperCase()}</strong></td>
+                <td style="padding:5px; border:1px solid #ddd;">${val.value} ${isRight ? '✅' : '❌'}</td>
+                <td style="padding:5px; border:1px solid #ddd;">${val.correctValue}</td>
+                <td style="padding:5px; border:1px solid #ddd; font-style: italic; color: #db4437;">${explainText}</td>
             </tr>
         `;
     });
-
-    tableHtml += `</tbody></table>`;
-    detailsDiv.innerHTML = tableHtml;
+    html += '</tbody></table>';
+    
+    detailsDiv.innerHTML = html;
     detailsDiv.style.display = 'block';
-    button.innerText = 'Ẩn chi tiết';
-}
+};
