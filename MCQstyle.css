@@ -1,0 +1,122 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.quiz-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 650px;
+}
+
+h1, h2 {
+    color: #4285f4;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.question {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-left: 5px solid #4285f4;
+    border-radius: 5px;
+    transition: border-left-color 0.3s;
+}
+
+.question p {
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.option label {
+    display: block;
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+/* Gạch chân và in đậm cho phần cần so sánh */
+.underline {
+    text-decoration: underline;
+    font-weight: bold; 
+}
+
+/* Màu cho đáp án sau khi nộp bài */
+.correct-answer {
+    background-color: #e6ffe6; /* Xanh lá nhạt */
+    border: 1px solid #0f9d58;
+    color: #0f9d58;
+    font-weight: bold;
+}
+.wrong-answer {
+    background-color: #ffe6e6; /* Đỏ nhạt */
+    border: 1px solid #db4437;
+    color: #db4437;
+    font-weight: bold;
+}
+
+/* Vô hiệu hóa input sau khi nộp bài */
+.submitted input[type="radio"] {
+    pointer-events: none;
+}
+
+button {
+    background-color: #0f9d58;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+button:hover:not(:disabled) {
+    background-color: #0c7b44;
+}
+
+#result {
+    margin-top: 30px;
+    padding: 15px;
+    border: 2px dashed #4285f4;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+    display: none;
+}
+
+/* Lịch sử làm bài */
+#history-list {
+    margin-top: 15px;
+}
+.history-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fafafa;
+}
+.history-item p {
+    margin: 5px 0;
+}
+.history-item .score-display {
+    font-weight: bold;
+    color: #0f9d58;
+}
